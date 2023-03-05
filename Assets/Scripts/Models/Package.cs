@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class Package : MonoBehaviour
 {
-    public bool pickupFromDepo { get; set; } = false;
+    public int ID;
+    public Vector2 deliveryLocation { get; set; }
+    
 }

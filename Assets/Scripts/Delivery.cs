@@ -48,7 +48,7 @@ public class Delivery : MonoBehaviour
             Debug.Log("Package delivered");
 
             // Deliver the package only if it was picked up from the depo
-            if (hasPackage && packages[0].pickupFromDepo)
+            if (hasPackage && packages[0].deliveryLocation != null)
             {
 
                 spriteRenderer.color = noPackageColor;
@@ -70,7 +70,7 @@ public class Delivery : MonoBehaviour
             // Load all packages from the delivery vehicle into the depo
             foreach (Package package in packages)
             {
-                package.pickupFromDepo = true;
+                package.deliveryLocation = new Vector3();
                 depoPackages.Add(package);
             }
 
