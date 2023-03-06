@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class ScrollBarPopulate : MonoBehaviour
 {
+    //todo: populate the upgrades and the delivery rounds.
+    public List<string> firstData;
+    public List<string> secondData;
 
     public GameObject prefab; // reference to the prefab that will be instantiated
     public RectTransform content; // reference to the content transform of the scroll view
