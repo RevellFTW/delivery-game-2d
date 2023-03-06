@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class Package : MonoBehaviour
 {
-    public int ID;
-    public Vector2 deliveryLocation { get; set; }
-    
+    public GameObject PackageObject;
+    public Vector3 DeliveryLocation;
+
+    public Package(GameObject packageObject)
+    {
+        PackageObject = packageObject;
+        DeliveryLocation = new Vector3(0,0,0);
+    }
 }
