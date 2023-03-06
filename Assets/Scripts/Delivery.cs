@@ -11,15 +11,17 @@ public class Delivery : MonoBehaviour
 
     public int maxPackages = 5; // Maximum number of packages that the player can carry at a time
     public bool hasPackage = false; // Whether the player is currently carrying a package
+    
     public List<Package> depoPackages = new List<Package>();
-
     private SpriteRenderer spriteRenderer; // Reference to the player's sprite renderer component
 
-    #region prefabs
+    #region prefabs & packages
 
     public GameObject packagePrefab;
     [SerializeField]
     public static List<PackageRound> packageRounds;
+    private int minPickups = 5;
+    private int maxPickups = 10;
     #endregion
 
 
@@ -31,6 +33,7 @@ public class Delivery : MonoBehaviour
     #region game state
     [SerializeField]
     public bool DeliveryState = false;
+    public bool TouchingDepo = false;
     #endregion
     [SerializeField]
     private static PackageRound currentRound;
@@ -63,7 +66,14 @@ public class Delivery : MonoBehaviour
             GameObject.Find("Package (14)").transform.position,
             GameObject.Find("Package (15)").transform.position,
             GameObject.Find("Package (16)").transform.position,
-            GameObject.Find("Package (17)").transform.position
+            GameObject.Find("Package (17)").transform.position,
+            GameObject.Find("Package (18)").transform.position,
+            GameObject.Find("Package (19)").transform.position,
+            GameObject.Find("Package (20)").transform.position,
+            GameObject.Find("Package (21)").transform.position,
+            GameObject.Find("Package (22)").transform.position,
+            GameObject.Find("Package (23)").transform.position,
+            GameObject.Find("Package (24)").transform.position
             };
 
 
@@ -79,31 +89,26 @@ public class Delivery : MonoBehaviour
             GameObject.Find("Customer (9)").transform.position,
         };
         DeletePackagesFromMap();
+        RefreshAvailablePackages();
     }
 
     public void Update()
     {
         Debug.Log("packageround size: " + packageRounds.Count);
         Debug.LogWarning("cur round size:" + currentRound.Size());
-        if (CheckIfAiscloseToB(spriteRenderer.transform, GameObject.Find("Depo").transform) && DeliveryState == false)
-        {
-            //TODO: add more if statements because it generates too much packages
-            if (currentRound.Size() != 0) CreatePackageRound();
-            spriteRenderer.color = noPackageColor;
-        }
     }
 
     private void DeletePackagesFromMap()
     {
-        for (int i = 1; i < 18; i++)
+        for (int i = 1; i < 25; i++)
         {
-            Destroy(GameObject.Find("Package (" + i + ")"));
+            DestroyImmediate(GameObject.Find("Package (" + i + ")"));
             Debug.Log("Packages deleted");
         }
 
         for (int i = 2; i < 9; i++)
         {
-            Destroy(GameObject.Find("Customer (" + i + ")"));
+            DestroyImmediate(GameObject.Find("Customer (" + i + ")"));
             Debug.Log("Customers deleted");
 
         }
@@ -113,13 +118,20 @@ public class Delivery : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         Debug.Log("Ouch");
+        
+        if (other.collider.tag == "Depo" && !DeliveryState && !TouchingDepo)
+        {
+            TouchingDepo = true;
+            if (currentRound.Size() != 0) CreatePackageRound();
+            spriteRenderer.color = noPackageColor;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Package" && currentRound.Size() < maxPackages && DeliveryState == false)
         {
-
+            TouchingDepo = false;
             hasPackage = true;
             spriteRenderer.color = hasPackageColor;
             Debug.Log("Package picked up");
@@ -174,16 +186,15 @@ public class Delivery : MonoBehaviour
     public void RefreshAvailablePackages()
     {
         // Destroy existing packages on the map
-        currentRound.Destroy();
+        DeletePackagesFromMap();
 
+        ShuffleArray(pickupLocations);
+        int numPackages = UnityEngine.Random.Range(minPickups, maxPickups + 1);
         // Instantiate new packages at random pickup locations
-        foreach (Vector2 pickupLocation in pickupLocations)
+        for (int i = 0; i < numPackages; i++)
         {
-            GameObject packageObject = Instantiate(packagePrefab, pickupLocation, Quaternion.identity);
-            Package package = new Package(packageObject);
-            PackageRound packageRound = new PackageRound();
-            packageRound.AddPackage(package);
-            packageRounds.Add(packageRound);
+            Vector2 pickupLocation = pickupLocations[i % pickupLocations.Count];
+            Instantiate(packagePrefab, pickupLocation, Quaternion.identity);
         }
     }
 
@@ -210,6 +221,17 @@ public class Delivery : MonoBehaviour
 
         // Set the current package round
         currentRound = packageRound;
+    }
+
+    private void ShuffleArray(List<Vector2> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            var temp = list[j];
+            list[j] = list[i];
+            list[i] = temp;
+        }
     }
 
 }
