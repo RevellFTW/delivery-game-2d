@@ -123,6 +123,7 @@ public class Delivery : MonoBehaviour
         {
             TouchingDepo = true;
             if (currentRound.Size() != 0) CreatePackageRound();
+            
             spriteRenderer.color = noPackageColor;
         }
     }
@@ -176,7 +177,7 @@ public class Delivery : MonoBehaviour
             packageRound.AddPackage(package);
         }
         packageRounds.Add(packageRound);
-
+        ScrollBarPopulate.AddToList(currentRound);
         // Clear the current package round and refresh available packages
         currentRound = new PackageRound();
         RefreshAvailablePackages();

@@ -6,6 +6,8 @@ public class PackageRound : MonoBehaviour
 {
     public List<Package> Packages = new List<Package>();
 
+    public string complexity = "todo";
+
     public void AddPackage(Package package)
     {
         Packages.Add(package);
