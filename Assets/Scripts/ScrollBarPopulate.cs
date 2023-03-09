@@ -31,6 +31,8 @@ public class ScrollBarPopulate : MonoBehaviour
     public static void AddToList(PackageRound packageRound)
     {
         GameObject listItem = Instantiate(prefab, content.transform);
+        listItem.GetComponent<PackageRound>().Packages = packageRound.Packages;
+        listItem.GetComponent<PackageRound>().complexity = packageRound.complexity;
         TMP_Text[] itemTexts = listItem.GetComponentsInChildren<TMP_Text>();
         itemTexts[0].text = packageRound.Packages.Count + " packages";
         itemTexts[1].text = "complexity: " + packageRound.complexity;
