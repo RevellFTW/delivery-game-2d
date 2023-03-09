@@ -148,6 +148,11 @@ public class Delivery : MonoBehaviour
                     Destroy(other.gameObject);
                     Debug.Log("succesfull delivery");
                 }
+                if(currentRound.Packages.Count == 0)
+                {
+                    spriteRenderer.color = noPackageColor;
+                    DeliveryState = false;
+                }
             }
 
             if (currentRound.Size() == 0) hasPackage = false;
@@ -219,6 +224,7 @@ public class Delivery : MonoBehaviour
         currentRound = packageRound;
         spriteRenderer.color = hasPackageColor;
         DeliveryState = true;
+        Destroy(packageRound.gameObject);
     }
 
     private void ShuffleArray(List<Vector2> list)
