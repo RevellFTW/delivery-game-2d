@@ -39,6 +39,7 @@ public class Delivery : MonoBehaviour
     [SerializeField]
     private static PackageRound currentRound;
 
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -99,12 +100,20 @@ public class Delivery : MonoBehaviour
 
     private void DeletePackagesFromMap()
     {
-        for (int i = 1; i < 25; i++)
+        if (GameObject.FindGameObjectWithTag("Package") != null)
+        {
+            var packages = GameObject.FindGameObjectsWithTag("Package");
+            foreach(var x in packages)
+            {
+                DestroyImmediate(x);
+            }
+        }
+            for (int i = 1; i < 25; i++)
         {
             DestroyImmediate(GameObject.Find("Package (" + i + ")"));
         }
 
-        for (int i = 2; i < 9; i++)
+        for (int i = 2; i < 10; i++)
         {
             DestroyImmediate(GameObject.Find("Customer (" + i + ")"));
 
@@ -119,9 +128,13 @@ public class Delivery : MonoBehaviour
         {
             TouchingDepo = true;
             if (currentRound.Size() != 0) CreatePackageRound();
-
             spriteRenderer.color = noPackageColor;
+
+            Driver.canMove = false;
+            ScrollBarPopulate.GUI.SetActive(true);
         }
+
+        
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -152,6 +165,8 @@ public class Delivery : MonoBehaviour
                 {
                     spriteRenderer.color = noPackageColor;
                     DeliveryState = false;
+                    Debug.Log("succesfull delivery round");
+
                 }
             }
 
@@ -201,6 +216,8 @@ public class Delivery : MonoBehaviour
             Vector2 pickupLocation = pickupLocations[i % pickupLocations.Count];
             Instantiate(packagePrefab, pickupLocation, Quaternion.identity);
         }
+        Driver.canMove = true;
+        ScrollBarPopulate.GUI.SetActive(false);
     }
 
     //TODO: Make UI list click execute this.
@@ -225,6 +242,8 @@ public class Delivery : MonoBehaviour
         spriteRenderer.color = hasPackageColor;
         DeliveryState = true;
         Destroy(packageRound.gameObject);
+        Driver.canMove = true;
+        ScrollBarPopulate.GUI.SetActive(false);
     }
 
     private void ShuffleArray(List<Vector2> list)

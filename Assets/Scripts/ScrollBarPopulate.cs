@@ -15,8 +15,11 @@ public class ScrollBarPopulate : MonoBehaviour
 
     // public int numberOfItems = 20; // number of items to display in the scroll view
     // Start is called before the first frame update
+
+    public static GameObject GUI;
     void Start()
     {
+        GUI = GameObject.Find("Canvas");
         prefab = GameObject.Find("Button (1)");
         content = GameObject.Find("ListOfPackages").GetComponent<RectTransform>();
 
