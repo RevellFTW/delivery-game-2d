@@ -1,10 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Delivery : MonoBehaviour
 {
+
+    public float money = 0;
+
+
     [SerializeField] Color32 hasPackageColor = new Color32(1, 1, 1, 1);
     [SerializeField] Color32 noPackageColor = new Color32(0, 1, 0, 1);
 
@@ -19,6 +24,7 @@ public class Delivery : MonoBehaviour
 
     public GameObject packagePrefab;
     public GameObject customerPrefab;
+    public GameObject moneyPrefab;
     [SerializeField]
     public static List<PackageRound> packageRounds;
     private int minPickups = 5;
@@ -38,10 +44,13 @@ public class Delivery : MonoBehaviour
     #endregion
     [SerializeField]
     private static PackageRound currentRound;
+    [SerializeField]
+    private static float currentRoundMultiplier = 1;
 
 
     void Start()
     {
+        
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         currentRound = new PackageRound();
@@ -132,6 +141,10 @@ public class Delivery : MonoBehaviour
 
             Driver.canMove = false;
             ScrollBarPopulate.GUI.SetActive(true);
+        }  
+        if (other.collider.tag == "UpgradeCenter")
+        {
+            ScrollBarPopulate.UpgradeGUI.SetActive(true);
         }
 
         
@@ -158,15 +171,17 @@ public class Delivery : MonoBehaviour
                 if (packageToDeliver.DeliveryLocation != null)
                 {
                     currentRound.DeliverPackage(packageToDeliver);
+                    currentRoundMultiplier += 0.1f;
                     Destroy(other.gameObject);
                     Debug.Log("succesfull delivery");
+                    addMoney(20);
                 }
                 if(currentRound.Packages.Count == 0)
                 {
                     spriteRenderer.color = noPackageColor;
                     DeliveryState = false;
                     Debug.Log("succesfull delivery round");
-
+                    addMoney((int)(10 * currentRoundMultiplier));
                 }
             }
 
@@ -198,6 +213,7 @@ public class Delivery : MonoBehaviour
             packageRound.AddPackage(package);
         }
         packageRounds.Add(packageRound);
+
         ScrollBarPopulate.AddToList(currentRound);
         // Clear the current package round and refresh available packages
         currentRound = new PackageRound();
@@ -268,5 +284,41 @@ public class Delivery : MonoBehaviour
         }
         return null;
     }
-    
+
+    public void addMoney(int amount)
+    {
+        money += amount;
+        moneyPrefab.GetComponent<TMP_Text>().text = money.ToString() + " $";
+    }
+
+    public void buyPhase1()
+    {
+        if (money >= 100)
+        {
+            buyPhase(100, 25);
+        }
+    }  
+    public void buyPhase2()
+    {
+        if (money >= 200)
+        {
+            buyPhase(100, 35);
+        }
+    }  
+    public void buyPhase3()
+    {
+        if (money >= 300)
+        {
+            buyPhase(100, 40);
+        }
+    }
+
+
+    public void buyPhase(int cost, int amount)
+    {
+        money -= cost;
+        moneyPrefab.GetComponent<TMP_Text>().text = money.ToString() + " $";
+        Driver.setMoveSpeed(amount);
+    }
+
 }

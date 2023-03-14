@@ -17,9 +17,12 @@ public class ScrollBarPopulate : MonoBehaviour
     // Start is called before the first frame update
 
     public static GameObject GUI;
+    public static GameObject UpgradeGUI;
     void Start()
     {
-        GUI = GameObject.Find("Canvas");
+        GUI = GameObject.Find("DepoGUI");
+        //UpgradeGUI = GameObject.Find("UpgradesGUI");
+       
         prefab = GameObject.Find("Button (1)");
         content = GameObject.Find("ListOfPackages").GetComponent<RectTransform>();
 
@@ -29,6 +32,7 @@ public class ScrollBarPopulate : MonoBehaviour
         //    TMP_Text itemText = listItem.GetComponentInChildren<TMP_Text>();
         //    itemText.text = packageRound.Packages.Count + " packages, complexity: " + packageRound.complexity;
         //}
+      //  UpgradeGUI.SetActive(false);
     }
 
     public static void AddToList(PackageRound packageRound)
@@ -38,6 +42,6 @@ public class ScrollBarPopulate : MonoBehaviour
         listItem.GetComponent<PackageRound>().complexity = packageRound.complexity;
         TMP_Text[] itemTexts = listItem.GetComponentsInChildren<TMP_Text>();
         itemTexts[0].text = packageRound.Packages.Count + " packages";
-        itemTexts[1].text = "complexity: " + packageRound.complexity;
+        itemTexts[1].text = "complexity: " + ComplexityCalculation.CalculateDeliveryRoundComplexity(packageRound).ToString();
     }
 }

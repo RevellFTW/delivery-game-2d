@@ -5,9 +5,11 @@ using UnityEngine;
 public class Driver : MonoBehaviour
 {
    [SerializeField] float steerSpeed = 0.1f;
-  [SerializeField] float moveSpeed = 20f;
+  [SerializeField] public static float moveSpeed = 20f;
   [SerializeField] float slowSpeed = 15f;
   [SerializeField] float boostSpeed = 25f;
+
+   
 
     public static bool canMove = true;
     
@@ -40,9 +42,14 @@ public class Driver : MonoBehaviour
     {
       
         if(other.tag == "Boost"){
-
+            
          moveSpeed = boostSpeed;
         }
         
       }
+
+    public static void setMoveSpeed(float speed)
+    {
+        moveSpeed = speed;
+    }
 }
