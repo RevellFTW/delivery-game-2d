@@ -42,6 +42,6 @@ public class ScrollBarPopulate : MonoBehaviour
         listItem.GetComponent<PackageRound>().complexity = packageRound.complexity;
         TMP_Text[] itemTexts = listItem.GetComponentsInChildren<TMP_Text>();
         itemTexts[0].text = packageRound.Packages.Count + " packages";
-        itemTexts[1].text = "complexity: " + ComplexityCalculation.CalculateDeliveryRoundComplexity(packageRound).ToString();
+        itemTexts[1].text = "complexity: " + packageRound.GetComplexity();
     }
 }

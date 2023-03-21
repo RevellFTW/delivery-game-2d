@@ -6,7 +6,7 @@ public class PackageRound : MonoBehaviour
 {
     public List<Package> Packages = new List<Package>();
 
-    public string complexity = "todo";
+    public string complexity;
 
     public void AddPackage(Package package)
     {
@@ -18,13 +18,24 @@ public class PackageRound : MonoBehaviour
         Packages.Remove(package);
     }
 
-    public int Size()
+    public void SetComplexity(float number)
+    {
+        this.complexity = ((int)number).ToString();
+    }
 
-    { return Packages.Count; }
+    public string GetComplexity()
+    {
+        return "level " +  complexity + " complexity";
+    }
 
     
     public void Destroy()
     {
         Packages.Clear();
+    }
+
+    public int Size()
+    { 
+        return Packages.Count; 
     }
 }

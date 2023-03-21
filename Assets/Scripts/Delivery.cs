@@ -182,6 +182,7 @@ public class Delivery : MonoBehaviour
                     DeliveryState = false;
                     Debug.Log("succesfull delivery round");
                     addMoney((int)(10 * currentRoundMultiplier));
+                    RefreshAvailablePackages();
                 }
             }
 
@@ -193,7 +194,6 @@ public class Delivery : MonoBehaviour
 
     private bool CheckIfAiscloseToB(Vector2 a, Transform b)
     {
-        //check if package is close to costumer
         if (Vector2.Distance(a, new Vector2(b.position.x, b.position.y)) < 9.5f)
         {
             return true;
@@ -212,9 +212,17 @@ public class Delivery : MonoBehaviour
         {
             packageRound.AddPackage(package);
         }
-        packageRounds.Add(packageRound);
 
-        ScrollBarPopulate.AddToList(currentRound);
+        int numPackages = packageRound.Packages.Count;
+        for (int i = 0; i < numPackages; i++)
+        {
+            Vector2 deliveryLocation = deliveryLocations[i % deliveryLocations.Count];
+            packageRound.Packages[i].DeliveryLocation = deliveryLocation;
+        }
+
+        packageRounds.Add(packageRound);
+        ComplexityCalculation.CalculateRoadComplexity(packageRound);
+        ScrollBarPopulate.AddToList(packageRound);
         // Clear the current package round and refresh available packages
         currentRound = new PackageRound();
     }
@@ -236,7 +244,6 @@ public class Delivery : MonoBehaviour
         ScrollBarPopulate.GUI.SetActive(false);
     }
 
-    //TODO: Make UI list click execute this.
     public void SelectPackageRound(PackageRound packageRound)
     {
         // Destroy existing packages on the map
@@ -248,9 +255,7 @@ public class Delivery : MonoBehaviour
         int numPackages = packageRound.Packages.Count;
         for (int i = 0; i < numPackages; i++)
         {
-            Vector2 deliveryLocation = deliveryLocations[i % deliveryLocations.Count];
-            packageRound.Packages[i].DeliveryLocation = deliveryLocation;
-            Instantiate(customerPrefab, deliveryLocation, Quaternion.identity);
+            Instantiate(customerPrefab, packageRound.Packages[i].DeliveryLocation, Quaternion.identity);
         }
 
         // Set the current package round
