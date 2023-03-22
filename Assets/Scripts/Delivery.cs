@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using TMPro;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class Delivery : MonoBehaviour
 {
 
     public float money = 0;
+    public static float fuel = 100;
 
 
     [SerializeField] Color32 hasPackageColor = new Color32(1, 1, 1, 1);
@@ -25,6 +27,8 @@ public class Delivery : MonoBehaviour
     public GameObject packagePrefab;
     public GameObject customerPrefab;
     public GameObject moneyPrefab;
+    public static GameObject fuelPrefab;
+    public  GameObject fuelRefillPrefab;
     [SerializeField]
     public static List<PackageRound> packageRounds;
     private int minPickups = 5;
@@ -52,7 +56,7 @@ public class Delivery : MonoBehaviour
     {
         
         spriteRenderer = GetComponent<SpriteRenderer>();
-
+        fuelPrefab = GameObject.Find("Fuel");
         currentRound = new PackageRound();
 
         packageRounds = new List<PackageRound>(){
@@ -105,6 +109,7 @@ public class Delivery : MonoBehaviour
 
     public void Update()
     {
+        moneyPrefab.GetComponent<TMP_Text>().text = ((int)money).ToString() + " $";
     }
 
     private void DeletePackagesFromMap()
@@ -140,8 +145,9 @@ public class Delivery : MonoBehaviour
             spriteRenderer.color = noPackageColor;
 
             Driver.canMove = false;
+            fuelRefillPrefab.GetComponent<TMP_Text>().text = "REFILL FOR: " + (int)((100 - fuel) * 0.6f) + " $";
             ScrollBarPopulate.GUI.SetActive(true);
-        }  
+        }
         if (other.collider.tag == "UpgradeCenter")
         {
             ScrollBarPopulate.UpgradeGUI.SetActive(true);
@@ -290,40 +296,58 @@ public class Delivery : MonoBehaviour
         return null;
     }
 
-    public void addMoney(int amount)
+    private void addMoney(int amount)
     {
         money += amount;
-        moneyPrefab.GetComponent<TMP_Text>().text = money.ToString() + " $";
-    }
-
-    public void buyPhase1()
-    {
-        if (money >= 100)
-        {
-            buyPhase(100, 25);
-        }
     }  
-    public void buyPhase2()
+    public static void DeductFuel()
     {
-        if (money >= 200)
+        fuel -= 0.005f;
+        if (fuel < 0)
         {
-            buyPhase(100, 35);
+            fuel = 0;
+            //todo: implement gradual slowing.
+            Driver.setMoveSpeed(1);
         }
-    }  
-    public void buyPhase3()
+        fuelPrefab.GetComponent<TMP_Text>().text = ((int)fuel).ToString() + " %";
+    }
+    public void RefillFuel()
     {
-        if (money >= 300)
-        {
-            buyPhase(100, 40);
-        }
+        float missingFuel = 100 - fuel;
+        money -= (int)(missingFuel * 0.6f);
+        fuel = 100;
+        fuelPrefab.GetComponent<TMP_Text>().text = fuel.ToString() + " %";
+        fuelRefillPrefab.GetComponent<TMP_Text>().text = "REFILL FOR: 0 $";
     }
 
+    //public void buyPhase1()
+    //{
+    //    if (money >= 100)
+    //    {
+    //        buyPhase(100, 25);
+    //    }
+    //}  
+    //public void buyPhase2()
+    //{
+    //    if (money >= 200)
+    //    {
+    //        buyPhase(100, 35);
+    //    }
+    //}  
+    //public void buyPhase3()
+    //{
+    //    if (money >= 300)
+    //    {
+    //        buyPhase(100, 40);
+    //    }
+    //}
 
-    public void buyPhase(int cost, int amount)
-    {
-        money -= cost;
-        moneyPrefab.GetComponent<TMP_Text>().text = money.ToString() + " $";
-        Driver.setMoveSpeed(amount);
-    }
+
+    //public void buyPhase(int cost, int amount)
+    //{
+    //    money -= cost;
+    //    moneyPrefab.GetComponent<TMP_Text>().text = money.ToString() + " $";
+    //    Driver.setMoveSpeed(amount);
+    //}
 
 }
