@@ -1,15 +1,17 @@
+using Assets.Scripts.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Delivery : MonoBehaviour
 {
 
     public float money = 0;
-    public static float fuel = 100;
+    public static float fuel;
 
 
     [SerializeField] Color32 hasPackageColor = new Color32(1, 1, 1, 1);
@@ -28,14 +30,20 @@ public class Delivery : MonoBehaviour
     public GameObject customerPrefab;
     public GameObject moneyPrefab;
     public static GameObject fuelPrefab;
-    public  GameObject fuelRefillPrefab;
+    public GameObject fuelRefillPrefab;
     [SerializeField]
     public static List<PackageRound> packageRounds;
     private int minPickups = 5;
     private int maxPickups = 10;
     #endregion
 
+    #region Colors
 
+    public static Color fullFuel = new Color(0, 255, 0);
+    public static Color mediumFuel = new Color(255, 215, 0);
+    public static Color lowFuel = Color.red;
+
+    #endregion
     #region Pickup And Delivery Locations
     public List<Vector2> pickupLocations;
     public List<Vector2> deliveryLocations;
@@ -44,6 +52,7 @@ public class Delivery : MonoBehaviour
     #region game state
     [SerializeField]
     public bool DeliveryState = false;
+    //rename this, its false if we picked up a package, and after we can enter the depo.
     public bool TouchingDepo = false;
     #endregion
     [SerializeField]
@@ -54,9 +63,10 @@ public class Delivery : MonoBehaviour
 
     void Start()
     {
-        
         spriteRenderer = GetComponent<SpriteRenderer>();
         fuelPrefab = GameObject.Find("Fuel");
+        fuel = 100;
+
         currentRound = new PackageRound();
 
         packageRounds = new List<PackageRound>(){
@@ -110,6 +120,7 @@ public class Delivery : MonoBehaviour
     public void Update()
     {
         moneyPrefab.GetComponent<TMP_Text>().text = ((int)money).ToString() + " $";
+
     }
 
     private void DeletePackagesFromMap()
@@ -117,12 +128,12 @@ public class Delivery : MonoBehaviour
         if (GameObject.FindGameObjectWithTag("Package") != null)
         {
             var packages = GameObject.FindGameObjectsWithTag("Package");
-            foreach(var x in packages)
+            foreach (var x in packages)
             {
                 DestroyImmediate(x);
             }
         }
-            for (int i = 1; i < 25; i++)
+        for (int i = 1; i < 25; i++)
         {
             DestroyImmediate(GameObject.Find("Package (" + i + ")"));
         }
@@ -135,54 +146,58 @@ public class Delivery : MonoBehaviour
     }
 
 
-    void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D collision)
     {
 
-        if (other.collider.tag == "Depo" && !DeliveryState && !TouchingDepo)
+        if (collision.collider.tag == "Depo" && !DeliveryState && !TouchingDepo)
         {
-            TouchingDepo = true;
-            if (currentRound.Size() != 0) CreatePackageRound();
-            spriteRenderer.color = noPackageColor;
-
-            Driver.canMove = false;
-            fuelRefillPrefab.GetComponent<TMP_Text>().text = "REFILL FOR: " + (int)((100 - fuel) * 0.6f) + " $";
-            ScrollBarPopulate.GUI.SetActive(true);
+            OnDepoEnter();
         }
-        if (other.collider.tag == "UpgradeCenter")
+        if (collision.collider.tag == "UpgradeCenter")
         {
-            ScrollBarPopulate.UpgradeGUI.SetActive(true);
+            OnUpgradeCenterEnter(collision);
         }
-
-        
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionExit2D(Collision2D collision)
     {
-        if (other.tag == "Package" && currentRound.Size() < maxPackages && DeliveryState == false)
+        if (collision.collider.tag == "Depo" && !DeliveryState && TouchingDepo)
+        {
+            OnDepoExit();
+        }
+        if (collision.collider.tag == "UpgradeCenter")
+        {
+        }
+    }
+
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Package" && currentRound.Size() < maxPackages && DeliveryState == false)
         {
             TouchingDepo = false;
             hasPackage = true;
             spriteRenderer.color = hasPackageColor;
             // Add the picked up package to the list of packages
-            currentRound.AddPackage(other.gameObject.GetComponent<Package>());
+            currentRound.AddPackage(collision.gameObject.GetComponent<Package>());
             // Destroy the package object
-            Destroy(other.gameObject);
+            Destroy(collision.gameObject);
         }
         else if (DeliveryState)
         {
-            
-            if (other.CompareTag("Customer"))
+
+            if (collision.CompareTag("Customer"))
             {
-                var packageToDeliver = GetCompatiblePackage(other);
+                var packageToDeliver = GetCompatiblePackage(collision);
                 if (packageToDeliver.DeliveryLocation != null)
                 {
                     currentRound.DeliverPackage(packageToDeliver);
                     currentRoundMultiplier += 0.1f;
-                    Destroy(other.gameObject);
+                    Destroy(collision.gameObject);
                     Debug.Log("succesfull delivery");
                     addMoney(20);
                 }
-                if(currentRound.Packages.Count == 0)
+                if (currentRound.Packages.Count == 0)
                 {
                     spriteRenderer.color = noPackageColor;
                     DeliveryState = false;
@@ -197,19 +212,6 @@ public class Delivery : MonoBehaviour
         }
 
     }
-
-    private bool CheckIfAiscloseToB(Vector2 a, Transform b)
-    {
-        if (Vector2.Distance(a, new Vector2(b.position.x, b.position.y)) < 9.5f)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public void CreatePackageRound()
     {
         // Create a new package round with all collected packages
@@ -288,7 +290,7 @@ public class Delivery : MonoBehaviour
     {
         foreach (var x in currentRound.Packages)
         {
-            if (CheckIfAiscloseToB(x.DeliveryLocation, customer.transform))
+            if (VectorCalculations.CheckIfAiscloseToB(x.DeliveryLocation, customer.transform))
             {
                 return x;
             }
@@ -299,55 +301,73 @@ public class Delivery : MonoBehaviour
     private void addMoney(int amount)
     {
         money += amount;
-    }  
+    }
+
+    private static void textColorTransition()
+    {
+        if (fuel >= 75f)
+        {
+            fuelPrefab.GetComponent<TMP_Text>().color = fullFuel;
+
+        }
+        if (fuel < 75f)
+        {
+            fuelPrefab.GetComponent<TMP_Text>().color = mediumFuel;
+        }
+
+        if (fuel < 30f)
+        {
+            fuelPrefab.GetComponent<TMP_Text>().color = lowFuel;
+        }
+    }
     public static void DeductFuel()
     {
-        fuel -= 0.005f;
+        fuel -= 0.05f;
+
+        textColorTransition();
+
         if (fuel < 0)
         {
             fuel = 0;
             //todo: implement gradual slowing.
             Driver.setMoveSpeed(1);
         }
-        fuelPrefab.GetComponent<TMP_Text>().text = ((int)fuel).ToString() + " %";
+        fuelPrefab.GetComponent<TMP_Text>().text = "FUEL: " + ((int)fuel).ToString() + " %";
     }
     public void RefillFuel()
     {
         float missingFuel = 100 - fuel;
-        money -= (int)(missingFuel * 0.6f);
-        fuel = 100;
-        fuelPrefab.GetComponent<TMP_Text>().text = fuel.ToString() + " %";
-        fuelRefillPrefab.GetComponent<TMP_Text>().text = "REFILL FOR: 0 $";
+        if (money >= (int)(missingFuel * 0.6f))
+        {
+            money -= (int)(missingFuel * 0.6f);
+            fuel = 100;
+            fuelPrefab.GetComponent<TMP_Text>().color = fullFuel;
+            fuelPrefab.GetComponent<TMP_Text>().text = fuel.ToString() + " %";
+            fuelRefillPrefab.GetComponent<TMP_Text>().text = "REFILL FOR: 0 $";
+        }
     }
 
-    //public void buyPhase1()
-    //{
-    //    if (money >= 100)
-    //    {
-    //        buyPhase(100, 25);
-    //    }
-    //}  
-    //public void buyPhase2()
-    //{
-    //    if (money >= 200)
-    //    {
-    //        buyPhase(100, 35);
-    //    }
-    //}  
-    //public void buyPhase3()
-    //{
-    //    if (money >= 300)
-    //    {
-    //        buyPhase(100, 40);
-    //    }
-    //}
+    private void OnDepoEnter()
+    {
+        TouchingDepo = true;
+        if (currentRound.Size() != 0) CreatePackageRound();
+        spriteRenderer.color = noPackageColor;
+        fuelRefillPrefab.GetComponent<TMP_Text>().text = "REFILL FOR: " + (int)((100 - fuel) * 0.6f) + " $";
+        ScrollBarPopulate.GUI.SetActive(true);
+    }
 
+    private void OnDepoExit()
+    {
+        TouchingDepo = false;
+        ScrollBarPopulate.GUI.SetActive(false);
+    }
 
-    //public void buyPhase(int cost, int amount)
-    //{
-    //    money -= cost;
-    //    moneyPrefab.GetComponent<TMP_Text>().text = money.ToString() + " $";
-    //    Driver.setMoveSpeed(amount);
-    //}
+    private void OnUpgradeCenterEnter(Collision2D collision)
+    {
+        Driver.canMove = false;
+
+        
+        ScrollBarPopulate.UpgradeGUI.SetActive(true);
+    }
 
 }
