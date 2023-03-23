@@ -155,18 +155,19 @@ public class Delivery : MonoBehaviour
         }
         if (collision.collider.tag == "UpgradeCenter")
         {
-            OnUpgradeCenterEnter(collision);
+            OnUpgradeCenterEnter();
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.tag == "Depo" && !DeliveryState && TouchingDepo)
+        if (collision.collider.tag == "Depo" && !DeliveryState)
         {
             OnDepoExit();
         }
         if (collision.collider.tag == "UpgradeCenter")
         {
+            OnUpgradeCenterLeave();
         }
     }
 
@@ -349,11 +350,13 @@ public class Delivery : MonoBehaviour
 
     private void OnDepoEnter()
     {
+        ScrollBarPopulate.GUI.SetActive(true);        
+        GameObject.Find("ListOfUpgrades").SetActive(false);
+        GameObject.Find("ListOfPackages").SetActive(true);
         TouchingDepo = true;
         if (currentRound.Size() != 0) CreatePackageRound();
         spriteRenderer.color = noPackageColor;
         fuelRefillPrefab.GetComponent<TMP_Text>().text = "REFILL FOR: " + (int)((100 - fuel) * 0.6f) + " $";
-        ScrollBarPopulate.GUI.SetActive(true);
     }
 
     private void OnDepoExit()
@@ -362,12 +365,16 @@ public class Delivery : MonoBehaviour
         ScrollBarPopulate.GUI.SetActive(false);
     }
 
-    private void OnUpgradeCenterEnter(Collision2D collision)
+    private void OnUpgradeCenterEnter()
     {
-        Driver.canMove = false;
-
-        
-        ScrollBarPopulate.UpgradeGUI.SetActive(true);
+        ScrollBarPopulate.GUI.SetActive(true);
+        GameObject.Find("ListOfUpgrades").SetActive(true);
+        GameObject.Find("ListOfPackages").SetActive(false);
+    }
+    
+    private void OnUpgradeCenterLeave()
+    {
+        ScrollBarPopulate.GUI.SetActive(false);
     }
 
 }
