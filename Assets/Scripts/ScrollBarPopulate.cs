@@ -12,6 +12,8 @@ public class ScrollBarPopulate : MonoBehaviour
 
     public static GameObject prefab; // reference to the prefab that will be instantiated
     public static GameObject upgradePrefab; // reference to the prefab that will be instantiated
+    public static GameObject listOfUpgrades;
+    public static GameObject listOfPackages;
     public static RectTransform content; // reference to the content transform of the scroll view
     public static RectTransform upgradeContent; // reference to the content transform of the scroll view
 
@@ -29,6 +31,8 @@ public class ScrollBarPopulate : MonoBehaviour
         upgradePrefab = GameObject.Find("UpgradeButton");
         content = GameObject.Find("ListOfPackages").GetComponent<RectTransform>();
         upgradeContent = GameObject.Find("ListOfUpgrades").GetComponent<RectTransform>();
+        listOfUpgrades = GameObject.Find("ListOfUpgrades");
+        listOfPackages = GameObject.Find("ListOfPackages");
 
         //foreach (PackageRound packageRound in Delivery.packageRounds)
         //{
@@ -37,16 +41,11 @@ public class ScrollBarPopulate : MonoBehaviour
         //    itemText.text = packageRound.Packages.Count + " packages, complexity: " + packageRound.complexity;
         //}
         //  UpgradeGUI.SetActive(false);
-        
+
         Instantiate(upgradePrefab, upgradeContent);
     }
 
-    public static void EnableUpgrades(bool value)
-    {
-        GameObject.Find("ListOfUpgrades").SetActive(value);
-        GameObject.Find("ListOfPackages").SetActive(!value);
-       
-    }
+  
     
     public static void AddToList(PackageRound packageRound)
     {

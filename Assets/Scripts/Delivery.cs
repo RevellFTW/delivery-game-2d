@@ -161,7 +161,7 @@ public class Delivery : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.tag == "Depo" && !DeliveryState)
+        if (collision.collider.tag == "Depo")
         {
             OnDepoExit();
         }
@@ -350,9 +350,11 @@ public class Delivery : MonoBehaviour
 
     private void OnDepoEnter()
     {
-        ScrollBarPopulate.GUI.SetActive(true);        
-        GameObject.Find("ListOfUpgrades").SetActive(false);
-        GameObject.Find("ListOfPackages").SetActive(true);
+
+        ScrollBarPopulate.GUI.SetActive(true);
+        ScrollBarPopulate.listOfUpgrades.SetActive(false);
+        ScrollBarPopulate.listOfPackages.SetActive(true);
+
         TouchingDepo = true;
         if (currentRound.Size() != 0) CreatePackageRound();
         spriteRenderer.color = noPackageColor;
@@ -368,10 +370,10 @@ public class Delivery : MonoBehaviour
     private void OnUpgradeCenterEnter()
     {
         ScrollBarPopulate.GUI.SetActive(true);
-        GameObject.Find("ListOfUpgrades").SetActive(true);
-        GameObject.Find("ListOfPackages").SetActive(false);
+        ScrollBarPopulate.listOfUpgrades.SetActive(true);
+        ScrollBarPopulate.listOfPackages.SetActive(false);
     }
-    
+
     private void OnUpgradeCenterLeave()
     {
         ScrollBarPopulate.GUI.SetActive(false);
