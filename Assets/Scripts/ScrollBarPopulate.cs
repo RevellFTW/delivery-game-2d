@@ -42,7 +42,7 @@ public class ScrollBarPopulate : MonoBehaviour
         //}
         //  UpgradeGUI.SetActive(false);
 
-        Instantiate(upgradePrefab, upgradeContent);
+        //Instantiate(upgradePrefab, upgradeContent);
     }
 
   

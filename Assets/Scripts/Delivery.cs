@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class Delivery : MonoBehaviour
@@ -12,6 +13,7 @@ public class Delivery : MonoBehaviour
 
     public float money = 0;
     public static float fuel;
+    private static float fuelIntensity;
 
 
     [SerializeField] Color32 hasPackageColor = new Color32(1, 1, 1, 1);
@@ -30,6 +32,9 @@ public class Delivery : MonoBehaviour
     public GameObject customerPrefab;
     public GameObject moneyPrefab;
     public static GameObject fuelPrefab;
+    public static GameObject storagePrefab;
+    public static GameObject fuelEfficiencyPrefab;
+    public static GameObject speedometerPrefab;
     public GameObject fuelRefillPrefab;
     [SerializeField]
     public static List<PackageRound> packageRounds;
@@ -65,8 +70,11 @@ public class Delivery : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         fuelPrefab = GameObject.Find("Fuel");
+        storagePrefab = GameObject.Find("Storage");
+        fuelEfficiencyPrefab = GameObject.Find("Mileage");
+        speedometerPrefab = GameObject.Find("Speedometer");
         fuel = 100;
-
+        fuelIntensity = 0.003f;
         currentRound = new PackageRound();
 
         packageRounds = new List<PackageRound>(){
@@ -120,6 +128,9 @@ public class Delivery : MonoBehaviour
     public void Update()
     {
         moneyPrefab.GetComponent<TMP_Text>().text = ((int)money).ToString() + " $";
+        speedometerPrefab.GetComponent<TMP_Text>().text = "Speed: " + ((int)Driver.moveSpeed).ToString() + " km / h";
+        fuelEfficiencyPrefab.GetComponent<TMP_Text>().text = "Mileage: " + ((fuelIntensity * 3000)).ToString("0.00") + " l / 100 km";
+        storagePrefab.GetComponent<TMP_Text>().text = "Storage: " + (maxPackages).ToString() + " boxes";
 
     }
 
@@ -323,7 +334,7 @@ public class Delivery : MonoBehaviour
     }
     public static void DeductFuel()
     {
-        fuel -= 0.05f;
+        fuel -= fuelIntensity;
 
         textColorTransition();
 
@@ -377,6 +388,40 @@ public class Delivery : MonoBehaviour
     private void OnUpgradeCenterLeave()
     {
         ScrollBarPopulate.GUI.SetActive(false);
+    }
+
+    public void UpgradeStorage()
+    {
+        if (maxPackages < 20)
+        {
+            if (money >= 100)
+            {
+                money -= 100;
+                maxPackages += 1;
+            }
+        }
+    }
+
+    public void UpgradeSpeed()
+    {
+        if (Driver.moveSpeed < 50)
+        {
+            if (money >= 100)
+            {
+                money -= 100;
+                Driver.setMoveSpeed(Driver.moveSpeed + 1);
+            }
+        }
+    }
+
+    public void UpgradeFuel()
+    {
+        if (fuelIntensity > 0.001)
+            if (money >= 250)
+            {
+                money -= 100;
+                fuelIntensity -= 0.00001f;
+            }
     }
 
 }

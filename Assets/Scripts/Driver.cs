@@ -6,17 +6,17 @@ using UnityEngine;
 public class Driver : MonoBehaviour
 {
    [SerializeField] float steerSpeed = 0.1f;
-  [SerializeField] public static float moveSpeed = 20f;
-  [SerializeField] float slowSpeed = 15f;
+  [SerializeField] public static float moveSpeed;
   [SerializeField] float boostSpeed = 25f;
 
-   Vector2 oldposition = Vector2.zero;
+    Vector2 oldposition = Vector2.zero;
 
     public static bool canMove = true;
     // Start is called before the first frame update
     void Start()
     {
         oldposition = new Vector2(transform.position.x, transform.position.y);
+        moveSpeed = 20f;
     }
 
     // Update is called once per frame
@@ -37,11 +37,7 @@ public class Driver : MonoBehaviour
             oldposition = currentPosition;
         }
     }
-    void OnCollisionEnter2D(Collision2D other){
-
-         moveSpeed = slowSpeed;
-    }
-
+ 
 
     void OnTriggerEnter2D(Collider2D other) 
     {
@@ -57,4 +53,5 @@ public class Driver : MonoBehaviour
     {
         moveSpeed = speed;
     }
+
 }
