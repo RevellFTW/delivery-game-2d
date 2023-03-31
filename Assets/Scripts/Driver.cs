@@ -8,7 +8,7 @@ public class Driver : MonoBehaviour
    [SerializeField] float steerSpeed = 0.1f;
   [SerializeField] public static float moveSpeed;
   [SerializeField] float boostSpeed = 25f;
-
+    public static Vector2 currentPosition;
     Vector2 oldposition = Vector2.zero;
 
     public static bool canMove = true;
@@ -30,7 +30,7 @@ public class Driver : MonoBehaviour
             transform.Rotate(0, 0, -steerAmount);
             transform.Translate(0, moveAmount, 0);
         }
-        Vector2 currentPosition = new Vector2(transform.position.x, transform.position.y);
+        currentPosition = new Vector2(transform.position.x, transform.position.y);
         if (currentPosition  != oldposition)
         {
             Delivery.DeductFuel();

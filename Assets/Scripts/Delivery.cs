@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
@@ -61,7 +62,7 @@ public class Delivery : MonoBehaviour
     public bool TouchingDepo = false;
     #endregion
     [SerializeField]
-    private static PackageRound currentRound;
+    public static PackageRound currentRound;
     [SerializeField]
     private static float currentRoundMultiplier = 1;
 
@@ -234,9 +235,10 @@ public class Delivery : MonoBehaviour
         }
 
         int numPackages = packageRound.Packages.Count;
+        System.Random random = new System.Random();
         for (int i = 0; i < numPackages; i++)
         {
-            Vector2 deliveryLocation = deliveryLocations[i % deliveryLocations.Count];
+            Vector2 deliveryLocation = deliveryLocations[random.Next(deliveryLocations.Count)];
             packageRound.Packages[i].DeliveryLocation = deliveryLocation;
         }
 
@@ -265,21 +267,26 @@ public class Delivery : MonoBehaviour
     }
 
     public void SelectPackageRound(PackageRound packageRound)
-    {
+    {    
         // Destroy existing packages on the map
         currentRound.Destroy();
         DeletePackagesFromMap();
 
 
         ShuffleArray(pickupLocations);
+        System.Random rng = new System.Random();
+
+        var shuffledPackages = packageRound.Packages.OrderBy(a => rng.Next()).ToList();
+
         int numPackages = packageRound.Packages.Count;
         for (int i = 0; i < numPackages; i++)
         {
-            Instantiate(customerPrefab, packageRound.Packages[i].DeliveryLocation, Quaternion.identity);
+            Instantiate(customerPrefab, shuffledPackages[i].DeliveryLocation, Quaternion.identity);
         }
 
         // Set the current package round
         currentRound = packageRound;
+        ArrowHandler.targetPositions = PackageHandler.ConvertPackagesToCoordinates(Delivery.currentRound.Packages);
         spriteRenderer.color = hasPackageColor;
         DeliveryState = true;
         Destroy(packageRound.gameObject);
