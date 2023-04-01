@@ -8,6 +8,8 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class Delivery : MonoBehaviour
 {
@@ -65,7 +67,10 @@ public class Delivery : MonoBehaviour
     public static PackageRound currentRound;
     [SerializeField]
     private static float currentRoundMultiplier = 1;
-
+    public static bool hasNavigation;
+    private float speedCost;
+    private float storageCost;
+    private float fuelCost;
 
     void Start()
     {
@@ -77,8 +82,11 @@ public class Delivery : MonoBehaviour
         fuel = 100;
         fuelIntensity = 0.003f;
         currentRound = new PackageRound();
-
-        packageRounds = new List<PackageRound>(){
+        hasNavigation = false;
+        speedCost = 100;
+    storageCost = 200;
+    fuelCost = 250;
+    packageRounds = new List<PackageRound>(){
             new PackageRound() };
 
         //TODO: REFACTOR IF EVERYTHING ELSE WORKS
@@ -124,6 +132,7 @@ public class Delivery : MonoBehaviour
         };
         DeletePackagesFromMap();
         RefreshAvailablePackages();
+        
     }
 
     public void Update()
@@ -215,6 +224,7 @@ public class Delivery : MonoBehaviour
                     spriteRenderer.color = noPackageColor;
                     DeliveryState = false;
                     Debug.Log("succesfull delivery round");
+                    ArrowHandler.arrowPrefab.SetActive(false);
                     addMoney((int)(10 * currentRoundMultiplier));
                     RefreshAvailablePackages();
                 }
@@ -267,7 +277,7 @@ public class Delivery : MonoBehaviour
     }
 
     public void SelectPackageRound(PackageRound packageRound)
-    {    
+    {
         // Destroy existing packages on the map
         currentRound.Destroy();
         DeletePackagesFromMap();
@@ -286,7 +296,11 @@ public class Delivery : MonoBehaviour
 
         // Set the current package round
         currentRound = packageRound;
-        ArrowHandler.targetPositions = PackageHandler.ConvertPackagesToCoordinates(Delivery.currentRound.Packages);
+        if (hasNavigation)
+        {
+            ArrowHandler.arrowPrefab.SetActive(true);
+            ArrowHandler.targetPositions = PackageHandler.ConvertPackagesToCoordinates(currentRound.Packages);
+        }
         spriteRenderer.color = hasPackageColor;
         DeliveryState = true;
         Destroy(packageRound.gameObject);
@@ -390,20 +404,24 @@ public class Delivery : MonoBehaviour
         ScrollBarPopulate.GUI.SetActive(true);
         ScrollBarPopulate.listOfUpgrades.SetActive(true);
         ScrollBarPopulate.listOfPackages.SetActive(false);
+        ScrollBarPopulate.scroll.GetComponent<ScrollRect>().content = ScrollBarPopulate.upgradeContent;
     }
 
     private void OnUpgradeCenterLeave()
     {
+        ScrollBarPopulate.scroll.GetComponent<ScrollRect>().content = ScrollBarPopulate.content;
         ScrollBarPopulate.GUI.SetActive(false);
+
     }
 
     public void UpgradeStorage()
     {
         if (maxPackages < 20)
         {
-            if (money >= 100)
+            if (money >= storageCost)
             {
-                money -= 100;
+                money -= storageCost;
+                storageCost += 50;
                 maxPackages += 1;
             }
         }
@@ -411,11 +429,12 @@ public class Delivery : MonoBehaviour
 
     public void UpgradeSpeed()
     {
-        if (Driver.moveSpeed < 50)
+        if (Driver.moveSpeed < 30)
         {
-            if (money >= 100)
+            if (money >= speedCost)
             {
-                money -= 100;
+                money -= speedCost;
+                speedCost += 50;
                 Driver.setMoveSpeed(Driver.moveSpeed + 1);
             }
         }
@@ -424,11 +443,20 @@ public class Delivery : MonoBehaviour
     public void UpgradeFuel()
     {
         if (fuelIntensity > 0.001)
-            if (money >= 250)
+            if (money >= fuelCost)
             {
-                money -= 100;
+                money -= fuelCost;
+                fuelCost += 50;
                 fuelIntensity -= 0.00001f;
             }
+    }
+    public void BuyNavigation()
+    {
+        if (money >= 5000)
+        {
+            money -= 5000;
+            hasNavigation = true;
+        }
     }
 
 }

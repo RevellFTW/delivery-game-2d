@@ -7,7 +7,6 @@ public class Driver : MonoBehaviour
 {
    [SerializeField] float steerSpeed = 0.1f;
   [SerializeField] public static float moveSpeed;
-  [SerializeField] float boostSpeed = 25f;
     public static Vector2 currentPosition;
     Vector2 oldposition = Vector2.zero;
 
@@ -16,7 +15,7 @@ public class Driver : MonoBehaviour
     void Start()
     {
         oldposition = new Vector2(transform.position.x, transform.position.y);
-        moveSpeed = 20f;
+        moveSpeed = 9f;
     }
 
     // Update is called once per frame
@@ -42,10 +41,10 @@ public class Driver : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other) 
     {
       
-        if(other.tag == "Boost"){
+        //if(other.tag == "Boost"){
             
-         moveSpeed = boostSpeed;
-        }
+        // moveSpeed = boostSpeed;
+        //}
         
       }
 

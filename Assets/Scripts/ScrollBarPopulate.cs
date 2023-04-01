@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +17,7 @@ public class ScrollBarPopulate : MonoBehaviour
     public static GameObject listOfPackages;
     public static RectTransform content; // reference to the content transform of the scroll view
     public static RectTransform upgradeContent; // reference to the content transform of the scroll view
-
+    public static GameObject scroll;
     // public int numberOfItems = 20; // number of items to display in the scroll view
     // Start is called before the first frame update
 
@@ -26,7 +27,7 @@ public class ScrollBarPopulate : MonoBehaviour
     void Start()
     {
         GUI = GameObject.Find("DepoGUI");
-       
+        scroll = GameObject.Find("Scroll");
         prefab = GameObject.Find("Button (1)");
         upgradePrefab = GameObject.Find("UpgradeButton");
         content = GameObject.Find("ListOfPackages").GetComponent<RectTransform>();
