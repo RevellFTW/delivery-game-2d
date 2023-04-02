@@ -10,6 +10,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 public class Delivery : MonoBehaviour
 {
@@ -30,7 +31,6 @@ public class Delivery : MonoBehaviour
     private SpriteRenderer spriteRenderer; // Reference to the player's sprite renderer component
 
     #region prefabs & packages
-
     public GameObject packagePrefab;
     public GameObject customerPrefab;
     public GameObject moneyPrefab;
@@ -43,6 +43,13 @@ public class Delivery : MonoBehaviour
     public static List<PackageRound> packageRounds;
     private int minPickups = 5;
     private int maxPickups = 10;
+    private int defaultMoveSpeed = 15;
+    private int defaultMaxCargoSize = 20;
+    #region cars
+    public Sprite TruckSprite;
+    public Sprite SportsCarSprite;
+    public Sprite StarterCarSprite;
+    #endregion
     #endregion
 
     #region Colors
@@ -71,9 +78,18 @@ public class Delivery : MonoBehaviour
     private float speedCost;
     private float storageCost;
     private float fuelCost;
+    private string currentCar;
+    private bool hasFasterCar;
+    private bool hasTruck;
+    private int speedUpgrade = 5;
+    private int storageUpgrade = 10;
 
     void Start()
     {
+        #region initialization
+        hasTruck = false;
+        hasFasterCar = false;
+        currentCar = "starter";
         spriteRenderer = GetComponent<SpriteRenderer>();
         fuelPrefab = GameObject.Find("Fuel");
         storagePrefab = GameObject.Find("Storage");
@@ -84,55 +100,34 @@ public class Delivery : MonoBehaviour
         currentRound = new PackageRound();
         hasNavigation = false;
         speedCost = 100;
-    storageCost = 200;
-    fuelCost = 250;
-    packageRounds = new List<PackageRound>(){
+        storageCost = 200;
+        fuelCost = 250;
+
+        #endregion
+        packageRounds = new List<PackageRound>(){
             new PackageRound() };
 
         //TODO: REFACTOR IF EVERYTHING ELSE WORKS
-        pickupLocations = new List<Vector2>()
+        pickupLocations = new List<Vector2>();
+        for (int i = 0; i < 40; i++)
         {
-            GameObject.Find("Package (1)").transform.position,
-            GameObject.Find("Package (2)").transform.position,
-            GameObject.Find("Package (3)").transform.position,
-            GameObject.Find("Package (4)").transform.position,
-            GameObject.Find("Package (5)").transform.position,
-            GameObject.Find("Package (6)").transform.position,
-            GameObject.Find("Package (7)").transform.position,
-            GameObject.Find("Package (8)").transform.position,
-            GameObject.Find("Package (9)").transform.position,
-            GameObject.Find("Package (10)").transform.position,
-            GameObject.Find("Package (11)").transform.position,
-            GameObject.Find("Package (12)").transform.position,
-            GameObject.Find("Package (13)").transform.position,
-            GameObject.Find("Package (14)").transform.position,
-            GameObject.Find("Package (15)").transform.position,
-            GameObject.Find("Package (16)").transform.position,
-            GameObject.Find("Package (17)").transform.position,
-            GameObject.Find("Package (18)").transform.position,
-            GameObject.Find("Package (19)").transform.position,
-            GameObject.Find("Package (20)").transform.position,
-            GameObject.Find("Package (21)").transform.position,
-            GameObject.Find("Package (22)").transform.position,
-            GameObject.Find("Package (23)").transform.position,
-            GameObject.Find("Package (24)").transform.position
-            };
+            if (GameObject.Find("Package (" + i + ")") != null)
+            {
+                pickupLocations.Add(GameObject.Find("Package (" + i + ")").transform.position);
+            }
+        }
 
-
-        deliveryLocations = new List<Vector2>()
+        deliveryLocations = new List<Vector2>();
+        for (int i = 1; i < 40; i++)
         {
-            GameObject.Find("Customer (2)").transform.position,
-            GameObject.Find("Customer (3)").transform.position,
-            GameObject.Find("Customer (4)").transform.position,
-            GameObject.Find("Customer (5)").transform.position,
-            GameObject.Find("Customer (6)").transform.position,
-            GameObject.Find("Customer (7)").transform.position,
-            GameObject.Find("Customer (8)").transform.position,
-            GameObject.Find("Customer (9)").transform.position,
-        };
+            if (GameObject.Find("Customer (" + i + ")") != null)
+            {
+                deliveryLocations.Add(GameObject.Find("Customer (" + i + ")").transform.position);
+            }
+        }
         DeletePackagesFromMap();
         RefreshAvailablePackages();
-        
+
     }
 
     public void Update()
@@ -154,12 +149,12 @@ public class Delivery : MonoBehaviour
                 DestroyImmediate(x);
             }
         }
-        for (int i = 1; i < 25; i++)
+        for (int i = 1; i < 40; i++)
         {
             DestroyImmediate(GameObject.Find("Package (" + i + ")"));
         }
 
-        for (int i = 2; i < 10; i++)
+        for (int i = 1; i < 40; i++)
         {
             DestroyImmediate(GameObject.Find("Customer (" + i + ")"));
 
@@ -416,25 +411,27 @@ public class Delivery : MonoBehaviour
 
     public void UpgradeStorage()
     {
-        if (maxPackages < 20)
+        if (maxPackages < Driver.cargoLimit)
         {
             if (money >= storageCost)
             {
                 money -= storageCost;
                 storageCost += 50;
                 maxPackages += 1;
+                Driver.upgradedStorage = maxPackages;
             }
         }
     }
 
     public void UpgradeSpeed()
     {
-        if (Driver.moveSpeed < 30)
+        if (Driver.moveSpeed < Driver.speedLimit)
         {
             if (money >= speedCost)
             {
                 money -= speedCost;
                 speedCost += 50;
+                Driver.upgradedSpeed = Driver.moveSpeed + 1;
                 Driver.setMoveSpeed(Driver.moveSpeed + 1);
             }
         }
@@ -456,6 +453,68 @@ public class Delivery : MonoBehaviour
         {
             money -= 5000;
             hasNavigation = true;
+        }
+    }
+
+    public void BuyTruck()
+    {
+        //swap out prefab sprite image property.
+        //if (money >= 5000)
+        //{
+        //    if (currentCar != "truck")
+        //    {
+        //        Driver.cargoLimit += 10;
+        //        currentCar = "truck";
+        //    }
+        //}
+        if (money >= 5000 || hasTruck)
+        {
+            if (currentCar != "truck")
+            {
+                if (currentCar == "sportcar")
+                {
+                    if(Driver.moveSpeed > defaultMoveSpeed)
+                    {
+                        Driver.moveSpeed = defaultMoveSpeed;
+                    }
+                    Driver.speedLimit -= speedUpgrade;
+                }
+                Driver.cargoLimit += storageUpgrade;
+                currentCar = "truck";
+                if (!hasTruck)
+                {
+                    money -= 5000;
+                    hasTruck = true;
+                }
+                if(Driver.upgradedStorage > maxPackages) maxPackages = Driver.upgradedStorage;
+                spriteRenderer.sprite = TruckSprite;
+            }
+        }
+    }
+
+    public void BuyFasterCar()
+    {
+        if (money >= 5000 || hasFasterCar)
+        {
+            if (currentCar != "sportcar")
+            {
+                if(currentCar == "truck")
+                {
+                    if(maxPackages > defaultMaxCargoSize) { maxPackages = defaultMaxCargoSize; }
+                    Driver.cargoLimit -= storageUpgrade;
+                }
+                Driver.speedLimit += speedUpgrade;
+                currentCar = "sportcar";
+                if (!hasFasterCar)
+                {
+                    money -= 5000;
+                    hasFasterCar = true;
+                }
+                if(Driver.upgradedSpeed > Driver.moveSpeed) Driver.moveSpeed = Driver.upgradedSpeed;
+                spriteRenderer.sprite = SportsCarSprite;
+                
+            }
+
         }
     }
 
