@@ -13,6 +13,7 @@ public class ScrollBarPopulate : MonoBehaviour
 
     public static GameObject prefab; // reference to the prefab that will be instantiated
     public static GameObject upgradePrefab; // reference to the prefab that will be instantiated
+    public static GameObject BottomButtons; // reference to the prefab that will be instantiated
     public static GameObject listOfUpgrades;
     public static GameObject listOfPackages;
     public static RectTransform content; // reference to the content transform of the scroll view
@@ -34,6 +35,7 @@ public class ScrollBarPopulate : MonoBehaviour
         upgradeContent = GameObject.Find("ListOfUpgrades").GetComponent<RectTransform>();
         listOfUpgrades = GameObject.Find("ListOfUpgrades");
         listOfPackages = GameObject.Find("ListOfPackages");
+        BottomButtons = GameObject.Find("BottomButtons");
 
         //foreach (PackageRound packageRound in Delivery.packageRounds)
         //{

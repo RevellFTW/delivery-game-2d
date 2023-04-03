@@ -398,12 +398,14 @@ public class Delivery : MonoBehaviour
         ScrollBarPopulate.GUI.SetActive(true);
         ScrollBarPopulate.listOfUpgrades.SetActive(true);
         ScrollBarPopulate.listOfPackages.SetActive(false);
+        ScrollBarPopulate.BottomButtons.SetActive(false);
         ScrollBarPopulate.scroll.GetComponent<ScrollRect>().content = ScrollBarPopulate.upgradeContent;
     }
 
     private void OnUpgradeCenterLeave()
     {
         ScrollBarPopulate.scroll.GetComponent<ScrollRect>().content = ScrollBarPopulate.content;
+        ScrollBarPopulate.BottomButtons.SetActive(true);
         ScrollBarPopulate.GUI.SetActive(false);
 
     }
@@ -457,15 +459,6 @@ public class Delivery : MonoBehaviour
 
     public void BuyTruck()
     {
-        //swap out prefab sprite image property.
-        //if (money >= 5000)
-        //{
-        //    if (currentCar != "truck")
-        //    {
-        //        Driver.cargoLimit += 10;
-        //        currentCar = "truck";
-        //    }
-        //}
         if (money >= 5000 || hasTruck)
         {
             if (currentCar != "truck")
