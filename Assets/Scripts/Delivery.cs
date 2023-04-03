@@ -6,7 +6,6 @@ using System.Data.SqlTypes;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
