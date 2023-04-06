@@ -1,3 +1,4 @@
+using Assets.Scripts.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -37,15 +38,6 @@ public class ScrollBarPopulate : MonoBehaviour
         listOfPackages = GameObject.Find("ListOfPackages");
         BottomButtons = GameObject.Find("BottomButtons");
 
-        //foreach (PackageRound packageRound in Delivery.packageRounds)
-        //{
-        //    GameObject listItem = Instantiate(prefab, content.transform);
-        //    TMP_Text itemText = listItem.GetComponentInChildren<TMP_Text>();
-        //    itemText.text = packageRound.Packages.Count + " packages, complexity: " + packageRound.complexity;
-        //}
-        //  UpgradeGUI.SetActive(false);
-
-        //Instantiate(upgradePrefab, upgradeContent);
     }
 
   

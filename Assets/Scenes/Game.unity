@@ -450,7 +450,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8137301307864321879, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
       propertyPath: m_text
-      value: Buy navigation
+      value: "Buy navigation: \n5000$"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8137301307864321880, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 8137301308172383116, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -915,7 +919,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8137301307864321879, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
       propertyPath: m_text
-      value: UPGRADE Speed
+      value: "UPGRADE Speed : \n100$"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8137301307864321880, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 8137301308172383116, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -5834,6 +5842,7 @@ GameObject:
   - component: {fileID: 668880615}
   - component: {fileID: 668880618}
   - component: {fileID: 668880617}
+  - component: {fileID: 668880619}
   m_Layer: 5
   m_Name: ListOfUpgrades
   m_TagString: Untagged
@@ -5905,6 +5914,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &668880619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668880614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25350c9d8fef13247abb9c4268979a0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &678023660
 GameObject:
   m_ObjectHideFlags: 0
@@ -6149,7 +6170,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2657ad202493524b840e5c04a280146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  money: 50
   hasPackageColor:
     serializedVersion: 2
     rgba: 4283289930
@@ -10386,7 +10406,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8137301307864321879, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
       propertyPath: m_text
-      value: UPGRADE Fuel Intensity
+      value: "UPGRADE Fuel Intensity : \n100$"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8137301307864321880, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0000038146973
       objectReference: {fileID: 0}
     - target: {fileID: 8137301308172383116, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -17303,6 +17327,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 668880615}
     m_Modifications:
+    - target: {fileID: 8137301307864321879, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
+      propertyPath: m_text
+      value: "UPGRADE storage: \n100$"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8137301307864321880, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0000038146973
+      objectReference: {fileID: 0}
     - target: {fileID: 8137301308172383116, guid: 64b3f5ccb3724ce428f396d50ac5c942, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

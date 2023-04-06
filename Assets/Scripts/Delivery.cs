@@ -14,7 +14,7 @@ using Image = UnityEngine.UI.Image;
 public class Delivery : MonoBehaviour
 {
 
-    public float money = 0;
+    public static float money = 0;
     public static float fuel;
     private static float fuelIntensity;
 
@@ -74,9 +74,9 @@ public class Delivery : MonoBehaviour
     [SerializeField]
     private static float currentRoundMultiplier = 1;
     public static bool hasNavigation;
-    private float speedCost;
-    private float storageCost;
-    private float fuelCost;
+    public static float speedCost;
+    public static float storageCost;
+    public static float fuelCost;
     private string currentCar;
     private bool hasFasterCar;
     private bool hasTruck;
