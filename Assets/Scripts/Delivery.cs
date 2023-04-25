@@ -14,7 +14,7 @@ using Image = UnityEngine.UI.Image;
 public class Delivery : MonoBehaviour
 {
 
-    public static float money = 0;
+    public static float money = 60000;
     public static float fuel;
     private static float fuelIntensity;
 
