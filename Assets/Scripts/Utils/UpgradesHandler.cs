@@ -27,34 +27,34 @@ namespace Assets.Scripts.Utils
         void Update()
         {
              
-            if (Delivery.money < 100)
+            if (DeliveryManager.money < 100)
             {
                 upgradeStorage.GetComponent<Button>().interactable = false;
                 upgradeSpeed.GetComponent<Button>().interactable = false;
                 upgradeFuelIntensity.GetComponent<Button>().interactable = false;
                 buyNavigation.GetComponent<Button>().interactable = false;
             }
-            else if (Delivery.money >= Delivery.speedCost)
+            else if (DeliveryManager.money >= DeliveryManager.speedCost)
             {
                 upgradeSpeed.GetComponent<Button>().interactable = true;
             }
-            else if (Delivery.money >= Delivery.fuelCost)
+            else if (DeliveryManager.money >= DeliveryManager.fuelCost)
             {
                 upgradeFuelIntensity.GetComponent<Button>().interactable = true;
 
             }
-            else if (Delivery.money >= Delivery.storageCost)
+            else if (DeliveryManager.money >= DeliveryManager.storageCost)
             {
                 upgradeStorage.GetComponent<Button>().interactable = true;
 
             }
-            else if (Delivery.money >= 5000)
+            else if (DeliveryManager.money >= 5000)
             {
                 buyNavigation.GetComponent<Button>().interactable = true;
             }
-            upgradeStorage.GetComponentInChildren<TMP_Text>().text = "UPGRADE storage: " + Delivery.storageCost.ToString() + "$";
-            upgradeSpeed.GetComponentInChildren<TMP_Text>().text = "UPGRADE speed: " + Delivery.speedCost.ToString() + "$"; ;
-            upgradeFuelIntensity.GetComponentInChildren<TMP_Text>().text = "UPGRADE Fuel Intensity: " + Delivery.fuelCost.ToString() + "$";
+            upgradeStorage.GetComponentInChildren<TMP_Text>().text = "UPGRADE storage: " + DeliveryManager.storageCost.ToString() + "$";
+            upgradeSpeed.GetComponentInChildren<TMP_Text>().text = "UPGRADE speed: " + DeliveryManager.speedCost.ToString() + "$"; ;
+            upgradeFuelIntensity.GetComponentInChildren<TMP_Text>().text = "UPGRADE Fuel Intensity: " + DeliveryManager.fuelCost.ToString() + "$";
         }
     }
 }

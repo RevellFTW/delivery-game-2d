@@ -11,10 +11,10 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
 
-public class Delivery : MonoBehaviour
+public class DeliveryManager : MonoBehaviour
 {
 
-    public static float money = 60000;
+    public static float money = 0;
     public static float fuel;
     private static float fuelIntensity;
 
@@ -124,7 +124,6 @@ public class Delivery : MonoBehaviour
                 deliveryLocations.Add(GameObject.Find("Customer (" + i + ")").transform.position);
             }
         }
-        DeletePackagesFromMap();
         RefreshAvailablePackages();
 
     }
@@ -247,6 +246,7 @@ public class Delivery : MonoBehaviour
         }
 
         packageRounds.Add(packageRound);
+        // calculate the complexity of the package rounds
         ComplexityCalculation.CalculateRoadComplexity(packageRound);
         ScrollBarPopulate.AddToList(packageRound);
         // Clear the current package round and refresh available packages
@@ -266,7 +266,6 @@ public class Delivery : MonoBehaviour
             Vector2 pickupLocation = pickupLocations[i % pickupLocations.Count];
             Instantiate(packagePrefab, pickupLocation, Quaternion.identity);
         }
-        Driver.canMove = true;
         ScrollBarPopulate.GUI.SetActive(false);
     }
 
@@ -298,7 +297,6 @@ public class Delivery : MonoBehaviour
         spriteRenderer.color = hasPackageColor;
         DeliveryState = true;
         Destroy(packageRound.gameObject);
-        Driver.canMove = true;
         ScrollBarPopulate.GUI.SetActive(false);
     }
 

@@ -2,7 +2,6 @@ using Assets.Scripts.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class ArrowHandler : MonoBehaviour
 {
@@ -16,15 +15,11 @@ public class ArrowHandler : MonoBehaviour
     {
         arrowPrefab = GameObject.Find("Arrow");
         triangleRect = arrowPrefab.GetComponent<RectTransform>();
-        //triangleRect.anchorMin = new Vector2(0.5f, 1f);
-        //triangleRect.anchorMax = new Vector2(0.5f, 1f);
-        //triangleRect.pivot = new Vector2(0.5f, 1f);
-        //triangleRect.anchoredPosition = new Vector2(0f, -triangleRect.sizeDelta.y / 2f);
         triangleRect.anchorMin = new Vector2(0.5f, 0.5f);
         triangleRect.anchorMax = new Vector2(0.5f, 0.5f);
         triangleRect.pivot = new Vector2(0.5f, 0.5f);
         triangleRect.anchoredPosition = Vector2.zero;
-        ArrowHandler.arrowPrefab.SetActive(Delivery.hasNavigation);
+        arrowPrefab.SetActive(DeliveryManager.hasNavigation);
     }
 
     void Update()
@@ -48,11 +43,7 @@ public class ArrowHandler : MonoBehaviour
 
                 if (nearestIndex >= 0)
                 {
-                    //Vector2 direction = (nearestPosition - Driver.currentPosition).normalized;
-                    //float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                    //arrowPrefab.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                     Vector3 nearestPos3D = nearestPosition;
-
                     Vector3 dir = nearestPos3D - arrowPrefab.transform.position;
                     float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
                     arrowPrefab.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);

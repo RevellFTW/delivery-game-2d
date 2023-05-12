@@ -12,8 +12,6 @@ public class Driver : MonoBehaviour
     public static float speedLimit = 15f;
     public static int cargoLimit = 20;
 
-    public static bool canMove = true;
-
     public static float upgradedSpeed { get; internal set; }
     public static int upgradedStorage { get; internal set; }
 
@@ -27,31 +25,30 @@ public class Driver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Drive();
+    }
 
-        if (canMove)
+    private void Drive()
+    {
+        float steerAmount = Input.GetAxis("Horizontal") * steerSpeed * Time.deltaTime;
+        float moveAmount = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
+        if (moveAmount != 0)
         {
-            float steerAmount = Input.GetAxis("Horizontal") * steerSpeed * Time.deltaTime;
-            float moveAmount = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
-            if (moveAmount != 0)
+            if (moveAmount < 0)
             {
-                if (moveAmount < 0)
-                {
-                    steerAmount = -steerAmount;
-                }
-
-                transform.Rotate(0, 0, -steerAmount);
+                steerAmount = -steerAmount;
             }
-            transform.Translate(0, moveAmount, 0);
+
+            transform.Rotate(0, 0, -steerAmount);
         }
+        transform.Translate(0, moveAmount, 0);
         currentPosition = new Vector2(transform.position.x, transform.position.y);
         if (currentPosition != oldposition)
         {
-            Delivery.DeductFuel();
+            DeliveryManager.DeductFuel();
             oldposition = currentPosition;
         }
     }
-
-
 
     public static void setMoveSpeed(float speed)
     {
