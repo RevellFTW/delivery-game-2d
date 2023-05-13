@@ -1,2 +1,2 @@
-# delivery-game-2d
-test
+# Bertalan Krisztián: BSC-s szakdolgozat
+Futárszimuláció unity-ben.
